@@ -1,22 +1,34 @@
-import { boot, state, esc, ymd, addDays, startOfWeek, TYPES } from "./core.js";
+import { boot, state, esc, ymd, addDays, startOfWeek, SLOT_META, LEFTOVERS } from "./core.js";
 
 let view = localStorage.getItem("calView") || "week";
 let anchor = new Date();
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const ORDER = ["breakfast", "lunch", "lunchHealthy", "main", "side", "veg"];
 const recipeById = id => state.recipes.find(r => r.id === id);
 
-function meals(key) {
-  const p = state.plan[key] || {};
-  return ["main", "side", "veg"].map(s => ({ slot: s, r: recipeById(p[s]) })).filter(x => x.r);
+// Everything planned for a day, in meal order. Leftovers show what they're from.
+function meals(date) {
+  const p = state.plan[ymd(date)] || {};
+  const prev = recipeById((state.plan[ymd(addDays(date, -1))] || {}).main);
+  const out = [];
+  for (const slot of ORDER) {
+    if (slot === "lunch" && p.lunch === LEFTOVERS) {
+      out.push({ slot, name: prev ? `Leftovers: ${prev.name}` : "Leftovers", r: prev || null });
+      continue;
+    }
+    const r = recipeById(p[slot]);
+    if (r) out.push({ slot, name: r.name, r });
+  }
+  return out;
 }
 
 function weekCard(d) {
   const key = ymd(d);
-  const list = meals(key);
+  const list = meals(d);
   return `<div class="card day ${key === ymd(new Date()) ? "today" : ""}" data-go="${key}" style="cursor:pointer">
     <div class="day-head"><div><b>${DOW[(d.getDay() + 6) % 7]}</b> <span class="muted">${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></div></div>
-    ${list.length ? list.map(({ slot, r }) => `<div class="wmeal">${r.photo ? `<img src="${r.photo}" alt="">` : `<div class="ph">${TYPES[slot].emoji}</div>`}
-        <div><div class="muted" style="font-size:.72rem">${TYPES[slot].short}</div><div>${esc(r.name)}</div></div></div>`).join("") : `<div class="muted">Nothing planned</div>`}
+    ${list.length ? list.map(({ slot, name, r }) => `<div class="wmeal">${r?.photo ? `<img src="${r.photo}" alt="">` : `<div class="ph">${slot === "lunch" && !r ? "♻️" : SLOT_META[slot].emoji}</div>`}
+        <div><div class="muted" style="font-size:.72rem">${SLOT_META[slot].label}</div><div>${esc(name)}</div></div></div>`).join("") : `<div class="muted">Nothing planned</div>`}
   </div>`;
 }
 
@@ -24,7 +36,7 @@ function monthCell(d, month) {
   const key = ymd(d);
   return `<div class="cal-cell ${d.getMonth() !== month ? "out" : ""} ${key === ymd(new Date()) ? "today" : ""}" data-go="${key}">
     <div class="dnum">${d.getDate()}</div>
-    ${meals(key).map(({ slot, r }) => `<div class="chip ${slot}" title="${esc(r.name)}">${TYPES[slot].emoji} ${esc(r.name)}</div>`).join("")}
+    ${meals(d).map(({ slot, name }) => `<div class="chip ${slot}" title="${esc(SLOT_META[slot].label + ": " + name)}">${slot === "lunch" && name.startsWith("Leftovers") ? "♻️" : SLOT_META[slot].emoji} ${esc(name)}</div>`).join("")}
   </div>`;
 }
 

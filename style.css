@@ -75,7 +75,10 @@ label.field>input,label.field>select,label.field>textarea{display:block;width:10
 .modal-actions{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem}
 .modal-actions .left{margin-right:auto}
 .photo-prev{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:.4rem 0;display:block}
-.ing-head,.ing-row{display:grid;grid-template-columns:1fr 70px 34px;gap:.4rem;align-items:center;margin-bottom:.4rem}
+.ing-head,.ing-row{display:grid;grid-template-columns:1fr 72px 92px 34px 34px;gap:.4rem;align-items:center;margin-bottom:.4rem}
+.ing-row select{width:100%;min-width:0}
+.ing-row .ing-link{text-decoration:none;justify-content:center}
+.ing-row .ing-link[hidden]{display:inline-flex;visibility:hidden}
 .ing-head{font-size:.75rem;color:var(--muted)}
 .ing-row input{width:100%}
 
@@ -124,7 +127,27 @@ label.field>input,label.field>select,label.field>textarea{display:block;width:10
 .toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);background:#23302a;color:#fff;padding:.6rem 1rem;border-radius:10px;z-index:100;box-shadow:var(--shadow)}
 .empty{text-align:center;color:var(--muted);padding:2rem 1rem}
 
+[hidden]{display:none!important}
+.ing-row .ing-link[hidden]{display:inline-flex!important;visibility:hidden}
+.pill.meal{background:#e8e8f5}
+.chip.breakfast{background:#fde2e2} .chip.lunch{background:#dbe8fb} .chip.lunchHealthy{background:#e4f5d5}
+.meal-head{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.88rem;margin:.7rem 0 .35rem;padding-top:.5rem;border-top:1px dashed var(--line)}
+.day-head + .meal-head{border-top:0;padding-top:0}
+.add-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem}
+.modal.wide{max-width:780px}
+.tablewrap{overflow-x:auto}
+.rtable{width:100%;border-collapse:collapse;font-size:.9rem}
+.rtable th{text-align:left;font-size:.75rem;color:var(--muted);font-weight:600;padding:.3rem .5rem;border-bottom:2px solid var(--line)}
+.rtable td{padding:.5rem;border-bottom:1px solid var(--line);vertical-align:top}
+.ing-chip{display:inline-flex;align-items:center;gap:.45rem;text-decoration:none;font-weight:600}
+.ing-chip img,.ing-chip .ph{width:32px;height:32px;border-radius:8px;object-fit:cover;background:#eef1ee;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.cart-row .thumb{width:52px;height:52px}
+.cart-row .thumb.ph{display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.totals .big{line-height:1.2}
+a.pill{text-decoration:none;color:var(--ink)}
+
 @media (max-width:640px){
+  .ing-head,.ing-row{grid-template-columns:1fr 60px 78px 30px 30px}
   .cal-cell{min-height:70px;font-size:.8em}
   .chip{font-size:.62rem}
   .toolbar .title{min-width:auto}
